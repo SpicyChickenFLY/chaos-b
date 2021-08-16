@@ -1,0 +1,148 @@
+[template]
+# =================通用参数=================
+user=mysql
+character_set_server=utf8mb4                    # 服务使用字符集
+port=[port]                                       # 开启实例服务的端口号
+log_timestamps=SYSTEM                           # 日志中记录时间来源
+basedir=/usr/local/mysql                        # mysql的安装路径
+datadir=/mysqldata/mysql[port]/data               # 表空间存放位置
+tmpdir=/mysqldata/mysql[port]/tmp                 # 临时文件存放位置
+socket=/mysqldata/mysql[port]/mysql.sock          # 服务socket位置
+pid-file=/mysqldata/mysql[port]/mysql.pid         # 服务进程号暂存文件
+log_error=/mysqldata/mysql[port]/log/mysqld.log   # 服务错误日志路径
+lower_case_table_names=1                        # 使用小写的表名
+; open_files_limit=65535                          # Mysql允许打开文件句柄最大值（数据库级别，需配合OS级别设置）
+## Mysql查询语句模式
+sql_mode=ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION
+## ONLY_FULL_GROUP_BY            对于GROUP_BY聚合操作，如果在SELECT中的列既没有在GROUP_BY中出现，
+##                               本身也不是聚合列（使用SUM，ANG等修饰的列），那么sql不合法，因为那一列是不确定的。
+## STRICT_TRANS_TABLES           如果一个值不能插入到一个事务表中，则中断当前的操作
+## NO_ZERO_IN_DATE               日期中的任意一项不能为零值（0001-00-00）IGNORE忽略
+## NO_ZERO_DATE                  日期不能全为零值（0000-00-00）IGNORE忽略
+## ERROR_FOR_DIVISION_BY_ZERO    除数为零时报错
+## NO_AUTO_CREATE_USER           
+## NO_ENGINE_SUBSTITUTION
+transaction-isolation=REPEATABLE-READ           # 事务隔离级别
+lock_wait_timeout=3600                          # 锁等待超时时间
+# read_only=0                                   # 默认设置为0，初始化后从库设置为1
+
+# ===============连接参数配置===================
+max_connections=200                             # 最大进程连接数
+max_connect_errors=100000000
+connect_timeout=10
+wait_timeout=86400
+interactive_timeout=86400
+max_allowed_packet=64M
+
+# ===============Server参数配置==================
+table_open_cache=2048
+tmp_table_size=64M
+max_heap_table_size=64M
+sort_buffer_size=4M
+join_buffer_size=4M
+read_buffer_size=8M
+read_rnd_buffer_size=4M
+key_buffer_size=32M
+bulk_insert_buffer_size=64M
+
+# ===============复制参数配置=====================
+server-id=[port]01                                # 主备多库需要唯一标识，一般格式端口号+ip后两段
+gtid_mode=on
+enforce_gtid_consistency=1
+binlog_gtid_simple_recovery=1
+slave-parallel-type=LOGICAL_CLOCK
+slave-parallel-workers=16
+slave_preserve_commit_order=1
+slave_transaction_retries=128
+## binlog 设置
+sync_binlog=1                                   # binlog落盘设置
+log-bin=/mysqllog/mysql[port]/binlog/mysql-bin    # binlog文件位置
+binlog_format=row                               # statement/row/mixed
+binlog_row_image=full
+max_binlog_size=64M
+binlog_cache_size=1M
+expire_logs_days=7
+binlog_error_action=ABORT_SERVER
+## relaylog 配置
+log_slave_updates=1
+relay_log=/mysqllog/mysql[port]/relaylog/mysql-relay  # relaylog文件位置
+max_relay_log_size=64M                               # relaylog文件大小
+relay_log_purge=0
+relay_log_recovery=1
+master_info_repository=TABLE
+relay_log_info_repository=TABLE
+report_host=localhost                               # 其他库连接时该服务的主机名
+report_port=[port]                                    # 其他库连接时该服务的端口号
+
+# ================半同步参数配置================
+# plugin_load="rpl_semi_sync_master=semisync_master.so;rpl_semi_sync_slave=semisync_slave.so"
+# rpl_semi_sync_master_enabled=1
+# rpl_semi_sync_slave_enabled=1
+# rpl_semi_sync_master_wait_for_slave_count=10000000000
+# rpl_semi_sync_master_wait_no_slave=1
+# rpl_semi_sync_master_timeout=1000000000
+
+# ================InnoDB参数配置===================
+innodb_flush_log_at_trx_commit=1                # redolog落盘设置
+innodb_buffer_pool_size=64M                      # InnoDB引擎缓冲池大小，线程共享
+innodb_buffer_pool_instances=8                  # 缓冲池拆分实例数目（用于提高Mysql并发性，减少线程读写页面竞争）
+innodb_buffer_pool_chunk_size=8M              # Chunk用于支持online buffer pool resize（默认64M）
+## 关系：innodb_buffer_pool_size = innodb_buffer_pool_chunk_size * innodb_buffer_pool_instances
+innodb_sort_buffer_size=4M                      # 排序缓冲池大小（语句中出现排序时使用）
+innodb_log_buffer_size=32M                      # redo log 缓存大小
+innodb_lock_wait_timeout=60
+innodb_log_group_home_dir=/mysqllog/mysql[port]/
+innodb_log_file_size=64M                         # 单个redo log文件大小
+innodb_log_files_in_group=4                     # redo log 组中文件数目
+innodb_data_file_path=ibdata1:12M:autoextend
+loose_innodb_numa_interleave=1
+innodb_file_per_table=1                         # 是否为每一个表开启独立的表空间（单表空间）
+innodb_io_capacity=1000
+innodb_io_capacity_max=2000
+innodb_stats_persistent_sample_pages=64
+innodb_online_alter_log_max_size=64M
+innodb_thread_concurrency=0                     # InnoDB可以并发使用最大线程
+innodb_write_io_threads=16
+innodb_read_io_threads=16
+innodb_page_cleaners=16
+innodb_flush_method=O_DIRECT                    # 刷新数据至数据/日志文件大的方法，影响I/O
+## FSYNC                 使用fysnc()系统函数刷新数据/日志文件 ，默认参数
+## O_DSYNC               使用O_SYNC函数打开/刷新日志文件，fsync()刷新数据文件
+## O_DIRECT              使用O_DIRECT函数打开数据文件，fsync()刷新数据/日志文件
+## O_DIRECT_NO_FSYNC     仅使用O_DIRECT函数进行刷新I/O
+innodb_monitor_enable=all
+innodb_print_all_deadlocks=1
+innodb_buffer_pool_dump_pct=40
+# innodb_status_output_locks=1
+# innodb_fill_factor=100                        # 提升索引维护性能，数据页百分比留白，范围10～100默认100
+# innodb_max_dirty_pages_pct                    # InnoDB 刷新脏页的比率, 即脏页占多少百分比开始进行刷脏页
+## undolog 配置
+innodb_undo_log_truncate=1                      # 
+innodb_max_undo_log_size=64M
+innodb_purge_rseg_truncate_frequency=128
+
+# ==================监控参数配置================
+## slowlog 配置
+slow_query_log=ON
+slow_query_log_file=/mysqldata/mysql[port]/log/mysql-slow.log
+long_query_time=0.1
+log_output=file
+log_slow_admin_statements=1
+log_slow_slave_statements=1
+log_throttle_queries_not_using_indexes=10
+performance_schema=ON
+performance-schema-instrument="'wait/lock/metadata/sql/mdl/memory=ON'"
+
+# ==================安全参数配置=================
+# plugin-load-add=validate_password.so
+# validate_password=FORCE_PLUS_PERMANENT
+# validate_password_policy=MEDIUM
+
+# =================其他参数配置==================
+symbolic-links=0
+skip-host-cache
+skip-name-resolve
+# skip-grant-tables
+
+
+

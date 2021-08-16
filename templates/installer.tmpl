@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ .title }}</title>
+</head>
+
+<body>
+    <h1>Nerver TODO</h1>
+    <div class="row">
+        <div id="general">
+            <h3>General</h3>
+            <input type="text" class="src-mysql-file" placeholder="Path of source mysql archive">
+            <br>
+            <input type="text" class="src-cnf-file" placeholder="Path of source mysql configure">
+            <br>
+            <input type="text" class="mysql-pwd" placeholder="Password of mysql instance">
+        </div>
+        <div class="col-md-6" id="standard">
+            <hr>
+            <div class="server-instance" padding="1px solid black">
+                <h3>Server</h3>
+                <div class="server">
+                    <input type="text" class="name" value="" placeholder="Host Name">
+                    <input type="text" class="port" placeholder="Host Port">
+                    <br>
+                    <input type="text" class="user" placeholder="User Name">
+                    <input type="text" class="pwd" placeholder="User Password">
+                </div>
+                <h3>instance</h3>
+                <div class="instance">
+                    <input type="text" class="port" placeholder="Instance Port">
+                    <br>
+                </div>
+                <button class="add">New Instance Port</button>
+                <br>
+                <br>
+            </div>
+            <button class="add">New Server Instance</button>
+            <div>
+                <hr>
+                <button class="install">开始执行实例创建计划</button>
+            </div>
+        </div>
+    </div>
+    <div id="template">
+        <div class="server-instance" padding="1px solid black">
+            <h3>Server</h3>
+            <div class="server">
+                <input type="text" class="name" placeholder="Host Name">
+                <input type="text" class="port" placeholder="Host Port">
+                <br>
+                <input type="text" class="user" placeholder="User Name">
+                <input type="text" class="pwd" placeholder="User Password">
+            </div>
+            <h3>instance</h3>
+            <div class="instance">
+                <input type="text" class="port" placeholder="Instance Port">
+                <br>
+            </div>
+            <button class="add">New Instance Port</button>
+            <br>
+            <br>
+        </div>
+    </div>
+</body>
+
+</html>
+
+<script src="/static/js/jquery-1.10.2.js"></script>
+<script src="/static/js/bootstrap.bundle.min.js"></script>
+<link rel="stylesheet" href="/static/css/bootstrap.css">
+
+<script src="/static/js/installer.js"></script>

@@ -1,0 +1,13 @@
+[client]
+socket=/mysqldata/mysql[port]/mysql.sock  # 客户机连接服务器所使用的socket
+ 
+[mysqld_multi]
+mysqld=/usr/local/mysql/bin/mysqld_safe
+mysqladmin=/usr/local/mysql/bin/mysqladmin
+log=/mysqldata/mysql[port]/log/multi.log
+user=admin
+password=123456
+
+[mysql]
+default-character-set=utf8mb4   # mysql实例中使用的字符集类型
+auto-rehash                     # mysql支持表名，列名补全，但是影响客户端初始化速度
