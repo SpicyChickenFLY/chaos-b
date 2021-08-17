@@ -20,11 +20,6 @@ import (
 
 const (
 	logFileName = "/tmp/run.log"
-	// LOG_LEVEL         = "info"
-	// LOG_FORMAT        = "TEXT"
-	// LOG_FILE_MAX_SIZE = 100 // unit:MB
-	// LOG_EXPIRED_DAY   = 7
-	// LOG_MAX_BACKUPS   = 5
 )
 
 const ( // GIN CONFIG
@@ -32,7 +27,7 @@ const ( // GIN CONFIG
 )
 
 func main() {
-	// 初始化全局变量
+	// Init logger
 	_, _, err := log.InitLoggerWithDefaultConfig(logFileName)
 	if err != nil {
 		fmt.Printf("Init logger failed: %s\n", err.Error())
@@ -40,11 +35,9 @@ func main() {
 	}
 	fmt.Println("Init logger succeed")
 
-	// load middlewares
-
+	// Init router
 	router := gin.Default()
 	router.Use(middleware.Cors())
-	router.LoadHTMLGlob("templates/*")
 	router.Static("/static", "./static")
 
 	// Group: Todo List
@@ -66,12 +59,6 @@ func main() {
 		}
 	}
 
-	groupUI := router.Group("/ui")
-	{
-		groupUI.GET("/auto-mysql", controller.ShowMysqlInstallerUI)
-		groupUI.GET("/auto-mycnf", controller.ShowCnfManagerUI)
-	}
-
 	server := &http.Server{
 		Addr:    ginPort,
 		Handler: router,
@@ -85,12 +72,9 @@ func main() {
 		}
 	}()
 
-	// Wait for interrupt signal to gracefully shutdown the server with
-	// a timeout of 5 seconds.
+	// Wait for interrupt signal to shutdown  with a timeout of 5 seconds.
 	quit := make(chan os.Signal)
-	// kill (no param) default send syscanll.SIGTERM
-	// kill -2 is syscall.SIGINT
-	// kill -9 is syscall. SIGKILL but can't be catch, so don't need add it
+	// kill (default SIGTERM) (-2 SIGINT) (-9 SIGKILL cant be catched)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
 	log.Info("Shutdown Server ...")

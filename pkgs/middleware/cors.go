@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// 用于跨域访问，保证访问者为前端页面
+// Cors 用于跨域访问，保证访问者为前端页面
 func Cors() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		method := c.Request.Method
