@@ -18,10 +18,12 @@ type Cluster struct {
 }
 
 type Test struct {
-	ID        int
-	UserID    int
-	ClusterID int
-	Type      int
-	Created   time.Time
-	Result    string
+	ID        int       `json:"id" gorm:"primaryKey;autoIncrement"`
+	UserID    int       `json:"user_id" gorm:"not null"`
+	ClusterID int       `json:"cluster_id" gorm:"not null"`
+	Type      int       `json:"type" gorm:"not null"`
+	CreatedAt time.Time `json:"created_at" gorm:"not null;default now()"`
+	UpdatedAt time.Time `json:"updated_at" gorm:"not null;default now()"`
+	Deleted   bool      `json:"deleted" gorm:"not null;default 0"`
+	Result    string    `json:"type" gorm:"not null"`
 }

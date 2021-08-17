@@ -7,10 +7,14 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// StartChaosTest call chaos service
-func StartChaosTest(c *gin.Context) {
+// ListChaosTest find all
+
+// CreateChaosTest call chaos service
+func CreateChaosTest(c *gin.Context) {
 	serverAddr := c.Param("addr")
 	cmd := c.Param("cmd")
-	resp := service.StartChaosTest(serverAddr, cmd)
+
+	resp := service.CreateChaosTest(serverAddr, cmd)
+
 	c.JSON(http.StatusOK, gin.H{"data": resp})
 }
